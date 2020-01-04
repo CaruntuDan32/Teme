@@ -1,0 +1,70 @@
+%Determinarea coeficien?ilor dezvolt?rii, semnalului x(t), în serie Fourier Complex?,
+%reprezentarea semnaluilui si a spectrului de amplitudini:
+
+%perioada semnalului
+P=40; 
+%frecventa semnalului
+f=1/P; 
+%fulsul semnalului ales in functie de numarul de la catalog
+D=4; 
+d=D/40;
+
+%reprezinta numarul de elemente
+N=50;
+ 
+%Esantionarea semnalului intial
+t=-P:0.002:P;
+ 
+%Determinarea semnalului triunghiular initial
+si=(1+sawtooth(2*pi*f*t,d))/2; 
+
+%functie pentru a afla componenta initiala
+a0=@(t)(1+sawtooth(2*pi*f*t,d))/2; 
+
+%determinarea componentei continue
+cc=1/P*integral(a0,0,P); 
+
+%initializarea lui Ck si Sk cu 0
+Ck=zeros(1,N);
+Sk=zeros(1,N);
+
+sr=0; 
+
+%generarea coeficientilor dezvoltarii
+for (k=1:1:N)
+  
+ % structura iterativa ce modifica semnalul pentru fiecare valoare a lui k
+   a1=@(t)(1+sawtooth(2*pi*f*t,d))/2.*exp(-2*pi*f*t*j*(k-25)); 
+     
+	% k(1-50) si aduna coeficientul rezultat la suma
+         Ck(k)=1/P*integral(a1,0,P);                               
+      
+	% coeficientilor fiind inmultit mai apoi cu exponentiala
+    	Sk(k+1)=2*abs(Ck(k));                                     
+
+        %conform formulei Seriei Fourier
+        sr=sr+Ck(k)*exp(2*pi*f*t*j*(k-25));                     
+
+ 
+
+end
+
+
+figure(1);
+%Afisarea semnalului modificat si cel initial in figura 1
+plot(t,sr,'r',t,si,'--'); 
+
+%Afisarea spectrului de valori in figura 2
+figure(2);
+Sk(26)=abs(cc);
+Sk(1)=Ak(51);
+stem([0:N],Sk,'b');
+
+
+%Seriile Fourier ne ajuta sa intelegem mai bine semnalul, 
+%sa analizam semnalele periodice prin descompunerea lor in functii.
+%Semnalul reconstruit foloseste un numar finit de termeni( N=50 in tema) si se apropie ca
+%forma de semnalul original, insa prezinta o marja de eroare.Cu cat marim
+%numarul de coeficienti ai Seriei Fourier, aceasta marja de eroare va fi din ce in ce mai
+%mica. In plus, se observa faptul ca semnalul poate fi aproximat printr-o
+%suma de sinusoide, variatiile semnalului prezentand un caracter sinusoidal.
